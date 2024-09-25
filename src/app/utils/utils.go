@@ -83,3 +83,112 @@ func LoadModel(filename string) (*ann.ANN, error) {
 
 	return &ann, nil
 }
+
+// TrainTestSplit divides the data into training and testing sets
+func TrainTestSplit(xData [][]float64, yData []float64, testSize float64) (trainX [][]float64, trainY []float64, testX [][]float64, testY []float64) {
+    // Seed the random number generator to ensure reproducibility
+    rand.Seed(time.Now().UnixNano())
+
+    // Calculate the number of test samples
+    totalSamples := len(xData)
+    numTestSamples := int(testSize * float64(totalSamples))
+
+    // Generate a list of indices and shuffle them
+    indices := rand.Perm(totalSamples)
+
+    // Split the indices into training and testing indices
+    testIndices := indices[:numTestSamples]
+    trainIndices := indices[numTestSamples:]
+
+    // Initialize slices for the output data
+    trainX = make([][]float64, len(trainIndices))
+    trainY = make([]float64, len(trainIndices))
+    testX = make([][]float64, len(testIndices))
+    testY = make([]float64, len(testIndices))
+
+    // Fill the training data
+    for i, idx := range trainIndices {
+        trainX[i] = xData[idx]
+        trainY[i] = yData[idx]
+    }
+
+    // Fill the testing data
+    for i, idx := range testIndices {
+        testX[i] = xData[idx]
+        testY[i] = yData[idx]
+    }
+    return
+}
+
+func MinMaxScaler(data [][]float64) ([][]float64, []float64, []float64) {
+    min := make([]float64, len(data[0]))
+    max := make([]float64, len(data[0]))
+
+    for j := range data[0] {
+        min[j] = data[0][j]
+        max[j] = data[0][j]
+    }
+
+    for _, row := range data {
+        for j, val := range row {
+            if val < min[j] {
+                min[j] = val
+            }
+            if val > max[j] {
+                max[j] = val
+            }
+        }
+    }
+
+    scaledData := make([][]float64, len(data))
+    for i, row := range data {
+        scaledRow := make([]float64, len(row))
+        for j, val := range row {
+            scaledRow[j] = (val - min[j]) / (max[j] - min[j])
+        }
+        scaledData[i] = scaledRow
+    }
+
+    return scaledData, min, max
+}
+
+func ScaleData(data [][]float64, min, max []float64) [][]float64 {
+    scaledData := make([][]float64, len(data))
+    for i, row := range data {
+        scaledRow := make([]float64, len(row))
+        for j, val := range row {
+            scaledRow[j] = (val - min[j]) / (max[j] - min[j])
+        }
+        scaledData[i] = scaledRow
+    }
+    return scaledData
+}
+
+func MinMaxScalerSingle(data []float64) ([]float64, float64, float64) {
+    min := data[0]
+    max := data[0]
+
+    for _, val := range data {
+        if val < min {
+            min = val
+        }
+        if val > max {
+            max = val
+        }
+    }
+
+    scaledData := make([]float64, len(data))
+    for i, val := range data {
+        scaledData[i] = (val - min) / (max - min)
+    }
+
+    return scaledData, min, max
+}
+
+func ScaleDataSingle(data []float64, min, max float64) []float64 {
+    scaledData := make([]float64, len(data))
+    for i, val := range data {
+        scaledData[i] = (val - min) / (max - min)
+    }
+    return scaledData
+}
