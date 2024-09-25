@@ -1,3 +1,4 @@
 env/
 src/app/dataset/dataset.csv
 /src/dataset/dataset.csv
+.csv
