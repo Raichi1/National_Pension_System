@@ -94,7 +94,6 @@ func (nn *NeuralNetwork) TrainConcurrently(inputs [][]float64, targets []float64
 
 	fmt.Println("Concurrent training")
 	for epoch := 0; epoch < epochs; epoch++ {
-		fmt.Printf("Epoch %d starting...\n", epoch)
 		totalError := 0.0
 		var wg sync.WaitGroup
 		var mu sync.Mutex // Crear un mutex

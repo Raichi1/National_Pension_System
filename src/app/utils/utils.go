@@ -1,12 +1,9 @@
 package utils
 
 import (
-	"encoding/gob"
 	"errors"
 	"math/rand"
-	"os"
 	"time"
-	"tp/models/ann"
 )
 
 // Función para dividir los datos
@@ -46,40 +43,4 @@ func SplitData(data [][]float64, labels []float64, percentage float64) ([][]floa
 	}
 
 	return trainData, testData, trainLabels, testLabels, nil
-}
-
-func SaveModel(Ann *ann.ANN, filename string) error {
-	// Crear el archivo
-	file, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	// Codificar el modelo usando gob
-	encoder := gob.NewEncoder(file)
-	err = encoder.Encode(Ann)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func LoadModel(filename string) (*ann.ANN, error) {
-	file, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	// Decodificar el modelo usando gob
-	var ann ann.ANN
-	decoder := gob.NewDecoder(file)
-	err = decoder.Decode(&ann)
-	if err != nil {
-		return nil, err
-	}
-
-	return &ann, nil
 }
